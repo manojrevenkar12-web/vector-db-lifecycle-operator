@@ -39,7 +39,7 @@ func setup(t *testing.T) (client.Client, *Reconciler, *[]model.Shard, *[]model.A
 	_ = clientgoscheme.AddToScheme(s)
 	_ = v1.AddToScheme(s)
 	vc := &v1.VectorCluster{ObjectMeta: metav1.ObjectMeta{Name: "vec", Namespace: "db", UID: "u1"}, Spec: v1.VectorClusterSpec{Version: "v1.15.0", Nodes: 3, ReplicationFactor: 2}}
-	c := fake.NewClientBuilder().WithScheme(s).WithObjects(vc).WithStatusSubresource(vc).Build()
+	c := fake.NewClientBuilder().WithScheme(s).WithObjects(vc).WithStatusSubresource(vc, &corev1.Pod{}).Build()
 	shards := &[]model.Shard{}
 	calls := &[]model.Action{}
 	r := &Reconciler{Client: c, Busy: 1, Idle: 1, Connect: func(_ *v1.VectorCluster, o int) Database {
@@ -62,7 +62,7 @@ func markReady(t *testing.T, c client.Client) {
 	for i := range pods.Items {
 		p := &pods.Items[i]
 		p.Status.Conditions = []corev1.PodCondition{{Type: corev1.PodReady, Status: corev1.ConditionTrue}}
-		if err := c.Update(context.Background(), p); err != nil {
+		if err := c.Status().Update(context.Background(), p); err != nil {
 			t.Fatal(err)
 		}
 	}
