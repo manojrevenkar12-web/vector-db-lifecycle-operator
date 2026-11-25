@@ -1,0 +1,12 @@
+{
+  "_comment": "Release gates, set on the development fleet before the held-out run. Never loosened after it.",
+  "operator": {
+    "shardsLostAtEndMax": 0,
+    "replicatedLossVsAsIsMax": 0.1,
+    "unavailableByOpsVsAsIsMax": 0.1,
+    "changesCompletedMin": 0.95,
+    "drRecoveredMin": 1.0,
+    "drWorstRpoMinutesMax": 900
+  },
+  "eachSafeguardMatters": true
+}

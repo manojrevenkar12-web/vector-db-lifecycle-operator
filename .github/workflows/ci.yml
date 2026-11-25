@@ -1,0 +1,124 @@
+name: ci
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lab:
+    name: planner, sim, lab and API (Go)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: {go-version: '1.24', cache: false}
+      - name: gofmt
+        run: test -z "$(gofmt -l internal cmd)" || { gofmt -l internal cmd; exit 1; }
+      - run: go vet ./...
+      - run: go test -race -count=1 ./...
+      - name: the committed reports are what the code produces
+        run: |
+          go run ./cmd/lab dev
+          git diff --exit-code -- reports/dev.json REPORT.md README.md web/public/data/report.json
+      - name: dev gates
+        run: go run ./cmd/lab gate dev
+      - name: the held-out fleet runs once
+        run: |
+          if [ -f reports/heldout.lock ]; then
+            set +e; go run ./cmd/lab heldout; code=$?; set -e
+            test "$code" = 3 || { echo "held-out ran again (exit $code)"; exit 1; }
+          fi
+
+  console:
+    name: console (React)
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: web}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  container:
+    name: API container smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t vdb-api .
+      - name: serve and answer
+        run: |
+          docker run -d --name api -p 8080:8080 vdb-api
+          for i in $(seq 1 30); do curl -sf localhost:8080/healthz && break; sleep 1; done
+          curl -sf localhost:8080/v1/clusters | jq -e 'length == 8'
+          id=$(curl -sf localhost:8080/v1/clusters | jq -r '.[0].id')
+          curl -sf -X POST localhost:8080/v1/clusters/$id/changes/preview -d '{"replicationFactor":1}' | jq -e '.effects.needsPerson == true'
+          curl -sf localhost:8080/v1/agent-tools | jq -e 'length >= 4'
+          docker logs api | tail -5
+
+  operator:
+    name: operator (controller-runtime)
+    runs-on: ubuntu-latest
+    defaults: {run: {working-directory: operator}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: {go-version: '1.24', cache: false}
+      - name: resolve modules (first run only, when go.sum is not committed yet)
+        run: test -f go.sum || go mod tidy
+      - run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+      - run: go vet ./...
+      - run: go test -count=1 ./...
+      - run: go build ./...
+      - uses: actions/upload-artifact@v4
+        with:
+          name: operator-modules
+          path: |
+            operator/go.mod
+            operator/go.sum
+
+  e2e:
+    name: e2e on kind (upgrade, crash, scale-down)
+    needs: [operator]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: {go-version: '1.24', cache: false}
+      - name: resolve modules
+        working-directory: operator
+        run: test -f go.sum || go mod tidy
+      - uses: helm/kind-action@v1
+        with: {cluster_name: vdb}
+      - name: build and load images
+        run: |
+          docker build -f Dockerfile.operator -t vdb-operator:dev .
+          docker pull qdrant/qdrant:v1.15.0
+          docker pull qdrant/qdrant:v1.16.0
+          docker pull curlimages/curl:8.11.1
+          for i in vdb-operator:dev qdrant/qdrant:v1.15.0 qdrant/qdrant:v1.16.0 curlimages/curl:8.11.1; do kind load docker-image "$i" --name vdb; done
+      - name: run
+        run: OUT=$PWD/e2e-result.json operator/e2e/run.sh
+      - name: summary
+        if: always()
+        run: |
+          echo '### e2e on kind' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat e2e-result.json >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || echo '{}' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: logs on failure
+        if: failure()
+        run: |
+          kubectl get vc,pods,pvc,svc -A -o wide || true
+          kubectl -n vdb-system logs deploy/vdb-operator --tail=200 || true
+          for p in vec-0 vec-1 vec-2; do echo "== $p"; kubectl logs $p --tail=60 || true; done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: e2e-result, path: e2e-result.json, if-no-files-found: ignore}

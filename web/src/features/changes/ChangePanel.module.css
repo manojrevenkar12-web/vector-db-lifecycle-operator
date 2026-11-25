@@ -1,0 +1,22 @@
+.panel { background: var(--surface); border-radius: var(--radius-panel); box-shadow: var(--shadow-panel); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); align-self: start; }
+.title { margin: 0; font-size: var(--size-4); font-weight: 680; }
+.lede { margin: 0; color: var(--ink-2); font-size: var(--size-2); }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.fields label { display: flex; flex-direction: column; gap: 4px; font-size: var(--size-2); color: var(--ink-2); }
+.fields select, .fields input[type="number"] { padding: 6px 8px; border: 1px solid var(--line-strong); border-radius: var(--radius-control); background: var(--surface); }
+.check { grid-column: 1 / -1; flex-direction: row !important; align-items: center; gap: var(--space-2) !important; }
+.who { border: 0; padding: 0; margin: 0; display: flex; gap: var(--space-4); font-size: var(--size-2); }
+.who legend { color: var(--ink-3); padding: 0; margin-bottom: 4px; }
+.who label { display: inline-flex; gap: 6px; align-items: center; }
+button { padding: 8px 14px; border-radius: var(--radius-control); border: 1px solid var(--line-strong); background: var(--surface); cursor: pointer; font-weight: 560; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.preview { border-top: 1px solid var(--line); padding-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+.h3 { margin: 0; font-size: var(--size-3); font-weight: 650; }
+.effects { margin: 0; padding-left: 1.1em; font-size: var(--size-2); }
+.risk { color: var(--bad); }
+.gate { margin: 0; font-size: var(--size-2); color: var(--ink); border-left: 3px solid var(--warn); padding-left: var(--space-2); }
+.quiet { margin: 0; font-size: var(--size-2); color: var(--ink-3); }
+.row { display: flex; gap: var(--space-2); }
+.ok { margin: 0; color: var(--good); font-size: var(--size-2); }
+.refused { margin: 0; color: var(--bad); font-size: var(--size-2); }

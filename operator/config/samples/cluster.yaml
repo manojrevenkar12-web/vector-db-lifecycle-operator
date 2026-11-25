@@ -1,0 +1,10 @@
+apiVersion: lifecycle.vectordb.dev/v1alpha1
+kind: VectorCluster
+metadata:
+  name: vec
+  namespace: default
+spec:
+  version: v1.15.0
+  nodes: 3
+  replicationFactor: 2
+  storageSize: 1Gi

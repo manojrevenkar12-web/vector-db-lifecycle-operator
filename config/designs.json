@@ -1,0 +1,15 @@
+{
+  "_comment": "Every design runs on the same fleet with the same luck. Ablations each turn off one safeguard of the operator.",
+  "main": ["as_is", "operator"],
+  "ablations": ["no_wait_active", "no_drain", "no_repair", "no_surge", "no_verify", "no_ship"],
+  "designs": {
+    "as_is": {"name": "As-is", "label": "As found: a StatefulSet and a backup cron job. Pods restart in order when the previous one is Ready, scale-down deletes the highest pod, snapshots are never tested or copied out of the region", "base": "as_is"},
+    "operator": {"name": "Operator", "label": "The operator: shard-aware rolling restarts, temporary copies for single-copy shards, drain before delete, repair, rebalance, restore-tested backups shipped to the DR region", "base": "safe"},
+    "no_wait_active": {"name": "No wait for Active", "label": "Restart the next node when pods are Ready, not when replicas are Active", "base": "safe", "off": "waitForActive"},
+    "no_drain": {"name": "No drain", "label": "Delete nodes without moving their replicas first", "base": "safe", "off": "drain"},
+    "no_repair": {"name": "No repair", "label": "Never re-replicate under-replicated shards", "base": "safe", "off": "repair"},
+    "no_surge": {"name": "No surge copy", "label": "No temporary copy before restarting the only copy of a shard", "base": "safe", "off": "surge"},
+    "no_verify": {"name": "No restore drill", "label": "Ship backups without a restore drill", "base": "safe", "off": "verifyBackups"},
+    "no_ship": {"name": "No shipping", "label": "Backups stay in the cluster's region", "base": "safe", "off": "shipBackups"}
+  }
+}

@@ -1,0 +1,6 @@
+web/node_modules/
+web/dist/
+*.test
+/api
+/lab
+e2e-result.json

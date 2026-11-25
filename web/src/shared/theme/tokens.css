@@ -1,0 +1,54 @@
+/* Theme tokens. Components use these names, never raw values. */
+:root {
+  --font: "Commissioner Variable", system-ui, sans-serif;
+
+  --bg: #f1f0f6;
+  --surface: #ffffff;
+  --surface-sunk: #e7e5ef;
+  --ink: #1e1b3a;
+  --ink-2: #4a4666;
+  --ink-3: #6e6a88;
+  --line: #d9d6e6;
+  --line-strong: #b9b4cf;
+  --accent: #b4234a;
+  --accent-ink: #ffffff;
+  --focus: #2f6fd6;
+
+  /* replica states: validated as a set (dataviz validate_palette.js, light surface) */
+  --state-active: #2f6fd6;
+  --state-partial: #a97510;
+  --state-initializing: #7c5cd6;
+  --state-dead: #c23b3b;
+  --state-empty: #e7e5ef;
+
+  /* status: reserved for health, always with a word beside it */
+  --good: #23805a;
+  --warn: #a97510;
+  --bad: #c23b3b;
+
+  --size-1: 12px;
+  --size-2: 13px;
+  --size-3: 15px;
+  --size-4: 18px;
+  --size-5: 24px;
+  --size-6: 34px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+
+  --radius-cell: 3px;
+  --radius-control: 6px;
+  --radius-panel: 10px;
+  --shadow-panel: 0 1px 0 var(--line), 0 8px 24px -16px rgba(30, 27, 58, 0.35);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--size-3); line-height: 1.45; }
+body { font-variant-numeric: tabular-nums; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

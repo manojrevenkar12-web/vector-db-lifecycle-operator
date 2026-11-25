@@ -1,0 +1,4 @@
+.box { padding: var(--space-5); color: var(--ink-2); border: 1px dashed var(--line-strong); border-radius: var(--radius-panel); background: var(--surface); }
+.error { border-style: solid; border-color: var(--bad); color: var(--ink); }
+.pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); margin-right: var(--space-2); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }

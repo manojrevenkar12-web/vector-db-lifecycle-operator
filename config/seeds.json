@@ -1,0 +1,5 @@
+{
+  "_comment": "dev: every design, every change. heldout: a harsher fleet, run once behind reports/heldout.lock (ADR 0006).",
+  "dev": [11, 12, 13],
+  "heldout": [7101, 7102, 7103]
+}

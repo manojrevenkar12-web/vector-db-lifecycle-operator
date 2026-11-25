@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vdb-operator
+  namespace: vdb-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: vdb-operator}
+  template:
+    metadata:
+      labels: {app: vdb-operator}
+    spec:
+      serviceAccountName: vdb-operator
+      securityContext: {runAsNonRoot: true}
+      containers:
+        - name: manager
+          image: vdb-operator:dev
+          imagePullPolicy: IfNotPresent
+          args: [--leader-elect]
+          ports:
+            - {name: metrics, containerPort: 8080}
+            - {name: probes, containerPort: 8081}
+          readinessProbe: {httpGet: {path: /readyz, port: 8081}, periodSeconds: 5}
+          livenessProbe: {httpGet: {path: /healthz, port: 8081}, periodSeconds: 10}
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {memory: 256Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}

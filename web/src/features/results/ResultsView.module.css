@@ -1,0 +1,27 @@
+.view { display: flex; flex-direction: column; gap: var(--space-5); max-width: 1100px; }
+.head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.title { margin: 0; font-size: var(--size-5); font-weight: 700; letter-spacing: -0.01em; }
+.lede { margin: 0; color: var(--ink-2); max-width: 72ch; }
+.switch { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--radius-control); overflow: hidden; }
+.switch button { border: 0; background: var(--surface); padding: 6px 12px; cursor: pointer; font-size: var(--size-2); }
+.switch button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.tiles { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--space-3); }
+.tile { background: var(--surface); border-radius: var(--radius-panel); box-shadow: var(--shadow-panel); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+.tileLabel { font-size: var(--size-2); color: var(--ink-2); }
+.pair { display: flex; align-items: baseline; gap: var(--space-2); }
+.from { font-size: var(--size-4); color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+.arrow { color: var(--ink-3); }
+.to { font-size: var(--size-6); font-weight: 720; letter-spacing: -0.02em; line-height: 1; }
+.who { font-size: var(--size-1); color: var(--ink-3); }
+.table { border-collapse: collapse; width: 100%; background: var(--surface); border-radius: var(--radius-panel); box-shadow: var(--shadow-panel); font-size: var(--size-2); }
+.table caption { text-align: left; color: var(--ink-3); padding-bottom: var(--space-2); }
+.table th, .table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+.table thead th { font-weight: 560; color: var(--ink-3); vertical-align: bottom; }
+.table tbody th { font-weight: 600; }
+.num { text-align: right !important; }
+.bad { font-weight: 750; color: var(--bad); }
+.h3 { margin: 0; font-size: var(--size-4); font-weight: 650; }
+.gates { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: var(--size-2); }
+.pass, .fail { display: inline-block; min-width: 42px; font-weight: 700; margin-right: var(--space-2); }
+.pass { color: var(--good); }
+.fail { color: var(--bad); }

@@ -1,0 +1,5 @@
+.tag { display: inline-flex; align-items: center; gap: 6px; font-size: var(--size-2); font-weight: 560; white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.good { color: var(--good); }
+.busy { color: var(--warn); }
+.bad { color: var(--bad); }
