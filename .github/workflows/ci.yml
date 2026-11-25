@@ -29,7 +29,8 @@ jobs:
       - name: the held-out fleet runs once
         run: |
           if [ -f reports/heldout.lock ]; then
-            set +e; go run ./cmd/lab heldout; code=$?; set -e
+            go build -o /tmp/lab ./cmd/lab
+            set +e; /tmp/lab heldout; code=$?; set -e
             test "$code" = 3 || { echo "held-out ran again (exit $code)"; exit 1; }
           fi
 
